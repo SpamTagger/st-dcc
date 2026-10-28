@@ -1,0 +1,5 @@
+lib/systemd/system/dccm.service
+usr/lib/dcc/dccm
+usr/lib/dcc/start-dccm
+usr/share/dcc/*.m4
+usr/share/man/man8/dccm.8*

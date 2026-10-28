@@ -1,0 +1,19 @@
+[%# vim: set ft=tt2: -%]
+[Unit]
+Description=DCC spam filter interface daemon
+After=network.target
+Before=spamd.service postfix.service
+Wants=dbclean.timer
+Documentation=man:dccifd(8)
+
+[Service]
+Type=forking
+User=dcc
+RuntimeDirectory=dcc
+UMask=0077
+ExecStart=[% libexecdir %]/start-dccifd
+SuccessExitStatus=95
+[% INCLUDE $systemd_security -%]
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,24 @@
+DCC clients use the UDP port 6277 for outgoing connections. For more
+information see "Which ports do I need to open in my firewall?" in FAQ.html.
+
+Enable DCC with:
+
+    systemctl enable --now dccifd.service
+
+If you use rspamd, set DCCM_REJECT_AT=MANY in /etc/dcc/dcc_conf and follow the
+instructions in https://www.rspamd.com/doc/modules/dcc.html.
+
+If you use SpamAssassin, enable the DCC plugin in
+/etc/mail/spamassassin/v310.pre.
+
+If you use Exim, append -SX-Envelope-From to DCCIFD_ARGS in /etc/dcc/dcc_conf
+and use the X-Envelope-From header instead of env_From in /etc/dcc/whiteclnt.
+Example:
+
+    ok substitute X-Envelope-From <someone@example.com>
+
+The programs cdcc, dccproc and dccsight are installed without setuid
+permissions, which are only required if DCC is run by ordinary users. Run
+"dpkg-reconfigure -plow dcc" to set the permissions on Debian-based systems.
+On RPM-based distributions, build your own packages with "rpmbuild --with
+install_setuid dcc.spec".

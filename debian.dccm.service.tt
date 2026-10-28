@@ -1,0 +1,19 @@
+[%# vim: set ft=tt2: -%]
+[Unit]
+Description=DCC milter interface daemon
+After=network.target
+Before=sendmail.service
+Wants=dbclean.timer
+Documentation=man:dccm(8)
+
+[Service]
+Type=forking
+User=dcc
+RuntimeDirectory=dcc
+UMask=0077
+ExecStart=[% libexecdir %]/start-dccm
+SuccessExitStatus=95
+[% INCLUDE $systemd_security -%]
+
+[Install]
+WantedBy=multi-user.target

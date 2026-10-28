@@ -1,0 +1,38 @@
+Source: dcc
+Section: non-free/mail
+Priority: optional
+Maintainer: SpamTagger Team <support@spamtagger.org>
+Build-Depends: debhelper-compat (= 13),
+               libmilter-dev,
+               libtemplate-perl (>= 2),
+               perl,
+               systemd
+Standards-Version: 4.7.0
+Homepage: https://www.dcc-servers.net/dcc/
+Rules-Requires-Root: no
+
+Package: dcc
+Architecture: any
+Depends: ${misc:Depends},
+         ${shlibs:Depends}
+Suggests: rspamd,
+          spamassassin
+Conflicts: dcc-client, dcc-common, dcc-server
+Provides: dcc-client, dcc-common, dcc-server
+Description: Identify bulk email
+ The DCC or Distributed Checksum Clearinghouse is a system of thousands of
+ clients and many servers collecting and counting checksums related to
+ millions of email messages per day.  The counts can be used by SMTP servers,
+ rspamd and SpamAssassin to filter unsolicited bulk email.  DCC is free to
+ organizations that participate in the global DCC network.
+
+Package: dcc-milter
+Architecture: any
+Depends: ${misc:Depends},
+         ${shlibs:Depends},
+         dcc (= ${binary:Version})
+Suggests: sendmail
+Description: Connect sendmail to DCC servers
+ dccm is a daemon built with the sendmail milter interface.  When sendmail is
+ configured to talk to dccm, all email is passed to dccm which reports related
+ checksums to a DCC server and returns the response.

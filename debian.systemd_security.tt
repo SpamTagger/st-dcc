@@ -1,0 +1,36 @@
+[%# vim: set ft=tt2: -%]
+[% DEFAULT
+systemd_version = 0
+-%]
+CapabilityBoundingSet=
+DevicePolicy=closed
+NoNewPrivileges=yes
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+RestrictAddressFamilies=AF_INET AF_INET6 AF_NETLINK AF_UNIX
+SystemCallArchitectures=native
+[% IF systemd_version >= 235 -%]
+MemoryDenyWriteExecute=yes
+PrivateUsers=yes
+ProtectSystem=strict
+ReadWritePaths=[% homedir %]
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictNamespaces=yes
+RestrictRealtime=yes
+[% END -%]
+[% IF systemd_version >= 245 -%]
+LockPersonality=yes
+ProtectClock=yes
+ProtectHostname=yes
+ProtectKernelLogs=yes
+RemoveIPC=yes
+RestrictSUIDSGID=yes
+SystemCallFilter=@system-service
+[% END -%]
+[% IF systemd_version >= 247 -%]
+ProtectProc=invisible
+ProcSubset=all
+[% END -%]

@@ -1,0 +1,69 @@
+#!/bin/sh
+
+set -e
+
+. /usr/share/debconf/confmodule
+db_version 2.0
+
+case "$1" in
+configure)
+    # Create user
+    systemd-sysusers ${DPKG_ROOT:+--root="$DPKG_ROOT"} dcc.conf
+
+    # Set file permissions
+    db_get dcc/install-setuid
+    if [ "$RET" = true ]; then
+        owner=dcc:dcc
+        mode=4755
+    else
+        owner=root:root
+        mode=0755
+    fi
+    for i in /usr/bin/cdcc /usr/bin/dccproc /usr/lib/dcc/dccsight; do
+        if test -x $i; then
+            chown $owner $i
+            chmod $mode $i
+        fi
+    done
+
+    if test -d /var/lib/dcc; then
+        chown dcc:dcc /var/lib/dcc
+    fi
+
+    if test -d /var/lib/dcc/log; then
+        chown dcc:dcc /var/lib/dcc/log
+        chmod 0710 /var/lib/dcc/log
+    fi
+
+    # Create /etc/dcc/ids, /etc/dcc/map.txt and /var/lib/dcc/map
+    PASSWD1=`(date; dd if=/dev/urandom count=1 2>&1 || true) \
+        | cksum | tr '     ' xy`
+    PASSWD2=`(echo "$PASSWD1"; date; dd if=/dev/urandom count=1 2>&1 || true) \
+        | cksum | tr '     ' xy`
+    if ! test -s /etc/dcc/ids; then
+        touch /etc/dcc/ids
+        chown dcc:dcc /etc/dcc/ids
+        chmod 0600 /etc/dcc/ids
+        sed -e "/^[^#]/s/secret1[0-9a-z]*/secret1$PASSWD1/" \
+            -e "/^[^#]/s/secret2[0-9a-z]*/secret2$PASSWD2/" \
+            /usr/share/dcc/ids > /etc/dcc/ids
+    fi
+    if ! test -s /etc/dcc/map.txt; then
+        touch /etc/dcc/map.txt
+        chown dcc:dcc /etc/dcc/map.txt
+        chmod 0600 /etc/dcc/map.txt
+        sed -e "/^[^#]/s/secret1[0-9a-z]*/secret1$PASSWD1/" \
+            /usr/share/dcc/map.txt > /etc/dcc/map.txt
+    fi
+    if ! test -s /var/lib/dcc/map; then
+        cdcc -qh /var/lib/dcc 'new map; load -; info' \
+            < /etc/dcc/map.txt > /dev/null
+        chown dcc:dcc /var/lib/dcc/map
+        chmod 0600 /var/lib/dcc/map
+    fi
+    ;;
+esac
+
+#DEBHELPER#
+
+exit 0

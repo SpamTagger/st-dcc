@@ -1,0 +1,12 @@
+[%# vim: set ft=tt2: -%]
+[Unit]
+Description=DCC cleanup
+Documentation=man:dbclean(8)
+
+[Service]
+Type=oneshot
+User=dcc
+ExecStart=[% libexecdir %]/cron-dccd
+Nice=5
+IOSchedulingClass=idle
+[% INCLUDE $systemd_security -%]

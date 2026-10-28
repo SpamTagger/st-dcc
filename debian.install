@@ -1,0 +1,56 @@
+lib/systemd/system/dbclean.service
+lib/systemd/system/dbclean.timer
+lib/systemd/system/dccifd.service
+usr/bin/cdcc
+usr/bin/dccif-test
+usr/bin/dccproc
+usr/lib/dcc/check_ip_range
+usr/lib/dcc/ck2ip
+usr/lib/dcc/cron-dccd
+usr/lib/dcc/dbclean
+usr/lib/dcc/dblist
+usr/lib/dcc/dcc-nagios
+usr/lib/dcc/dcc-stats-collect
+usr/lib/dcc/dcc-stats-graph
+usr/lib/dcc/dcc-stats-init
+usr/lib/dcc/dcc-stats-update
+usr/lib/dcc/dccd
+usr/lib/dcc/dccifd
+usr/lib/dcc/dccsight
+usr/lib/dcc/dns-helper
+usr/lib/dcc/dump-clients
+usr/lib/dcc/fetchblack
+usr/lib/dcc/fetchids
+usr/lib/dcc/fix-map
+usr/lib/dcc/hackmc
+usr/lib/dcc/list-clients
+usr/lib/dcc/logger
+usr/lib/dcc/newwebuser
+usr/lib/dcc/rcDCC
+usr/lib/dcc/start-dccd
+usr/lib/dcc/start-dccifd
+usr/lib/dcc/start-grey
+usr/lib/dcc/stats-get
+usr/lib/dcc/stop-dccd
+usr/lib/dcc/uninstalldcc
+usr/lib/dcc/updatedcc
+usr/lib/dcc/wlist
+usr/share/dcc/ids
+usr/share/dcc/map.txt
+usr/share/man/man8/cdcc.8*
+usr/share/man/man8/dbclean.8*
+usr/share/man/man8/dblist.8*
+usr/share/man/man8/dcc.8*
+usr/share/man/man8/dccd.8*
+usr/share/man/man8/dccifd.8*
+usr/share/man/man8/dccproc.8*
+usr/share/man/man8/dccsight.8*
+var/lib/dcc/cgi-bin usr/share/doc/dcc/examples
+var/lib/dcc/log
+var/lib/dcc/dcc_conf etc/dcc
+var/lib/dcc/flod etc/dcc
+var/lib/dcc/grey_flod etc/dcc
+var/lib/dcc/grey_whitelist etc/dcc
+var/lib/dcc/whiteclnt etc/dcc
+var/lib/dcc/whitecommon etc/dcc
+var/lib/dcc/whitelist etc/dcc

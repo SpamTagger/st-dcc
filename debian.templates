@@ -1,0 +1,7 @@
+Template: dcc/install-setuid
+Type: boolean
+Default: false
+Description: Should some executables be installed with setuid permissions?
+ The cdcc, dccproc and dccsight programs can be installed with the setuid bit
+ set, so that they will run with the permissions of the 'dcc' user. This is
+ only required if DCC will be run by ordinary users. If in doubt, say no.

@@ -1,0 +1,65 @@
+#!/usr/bin/make -f
+# vim: ft=make
+
+INSTALL = $(CURDIR)/debian/tmp
+SYSTEMD_VERSION = $(shell systemctl --version | head -n 1 | cut -d ' ' -f 2)
+UNITDIR = /lib/systemd/system
+TEMPLATE_VARS = \
+    --define libexecdir=/usr/lib/dcc \
+    --define homedir=/var/lib/dcc \
+    --define systemd_security=debian/systemd_security.tt \
+    --define systemd_version=$(SYSTEMD_VERSION)
+
+%:
+	dh $@
+
+.PHONY: patch
+patch:
+	# The postinst script creates the files ids, map.txt and map
+	sed -i.orig '/sh fix-map/d' homedir/Makefile.in
+	# Let libmilter/mfapi.h include stdbool.h
+	sed -i.orig '/^CFLAGS/s/$$/ -DSM_CONF_STDBOOL_H=1/' Makefile.inc.in
+
+override_dh_auto_configure: patch
+	FETCH_CMD=/usr/bin/wget \
+	HTPASSWD=/usr/bin/htpasswd \
+	NOTIFYMAILER=/usr/sbin/sendmail \
+	PERL=/usr/bin/perl \
+	RRDTOOL=/usr/bin/rrdtool \
+	CFLAGS="-DSM_CONF_STDBOOL_H=1" \
+	./configure \
+	    --bindir=/usr/bin \
+	    --libexecdir=/usr/lib/dcc \
+	    --mandir=/usr/share/man \
+	    --homedir=/var/lib/dcc \
+	    --with-cgi-bin=/var/lib/dcc/cgi-bin \
+	    --with-rundir=/run/dcc \
+	    --enable-pkg-make \
+	    --with-install-cmd=/usr/bin/install \
+	    --with-installroot=$(INSTALL) \
+	    --with-uid=dcc
+
+override_dh_auto_install:
+	make -j1 install DESTDIR=$(INSTALL)
+	dh_installsysusers
+
+override_dh_install:
+	# Install config templates and sendmail files
+	install -d $(INSTALL)/usr/share/dcc
+	install -m 0644 homedir/ids $(INSTALL)/usr/share/dcc/ids
+	install -m 0644 homedir/map.txt $(INSTALL)/usr/share/dcc/map.txt
+	install -m 0644 misc/*.m4 $(INSTALL)/usr/share/dcc/
+	# Install systemd unit files
+	install -d $(INSTALL)/$(UNITDIR)
+	for i in dbclean.timer dbclean.service dccifd.service dccm.service; do \
+	    tpage $(TEMPLATE_VARS) debian/$$i.tt > $(INSTALL)/$(UNITDIR)/$$i; \
+	done
+	# Install the software
+	dh_install
+
+override_dh_installchangelogs:
+	dh_installchangelogs CHANGES
+
+override_dh_installsystemd:
+	dh_installsystemd -pdcc dccifd.service
+	dh_installsystemd -pdcc-milter dccm.service
